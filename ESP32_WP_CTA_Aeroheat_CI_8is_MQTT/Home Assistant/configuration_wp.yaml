@@ -1,0 +1,23 @@
+...
+
+# includes
+template: !include templates.yaml
+mqtt: !include mqtt.yaml
+
+# influx db definitions
+influxdb:
+  host: localhost
+  port: 8086
+  database: homeassistant
+  username: homeassistant
+  password: homeassistant
+  max_retries: 3
+  default_measurement: state
+  include:
+    domains:
+      - sensor
+    entity_globs:
+      - sensor.*
+
+...  
+#EOF

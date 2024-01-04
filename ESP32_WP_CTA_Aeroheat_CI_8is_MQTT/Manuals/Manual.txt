@@ -1,0 +1,121 @@
+ inführung
+
+Das Ziel dieses kleinen Projektes ist die Integration meiner Wärmepumpe in den Home Assistant.
+
+Zum einen wollte ich den kostenpflichtigen Service 'Modbus TCP' oder 'alpha web' zur Fernwartung und Fernüberwachnung umgehen und zum anderen
+die Wärmepumpe (WP) in mein Home Assistant integrieren. Das Remote Steuern und Anpassen von Einstellungen der WPe wird aktuell nicht implementiert.
+
+Die WP CTA Aeroheat CI 8is wird bei Alpha Innotec produziert und ist eine rebrandetes Model der Alpha Innotec LWCV 82R1/3.
+Bei der CTA Aeroheat CI 8is wird die Steuerung Alpha Innotec Luxtronic 2.0/2.1 eingesetzt.
+
+Die Grundlagen für meine Lösung stammen aus folgenden Inputs:
+- https://community.homey.app/t/reading-data-from-luxtronik-webserver-heatpump/26513
+- https://community.symcon.de/t/waermepumpen-mit-luxtronik-2-auslesen-verarbeiten-und-erweitern-alphainnotec-novelan-und-andere/130164
+- https://github.com/Bouni/Luxtronik-2/tree/master
+
+Damit mit der WP resp. der Steuerung Luxtronic 2.x kommuniziert werden kann, sind folgende Voraussetzungen nötig:
+- Das Ehernet Interface der Luxtronis 2.x muss an ein LAN angeschlossen sein (siehe Luxtronic Manual)
+- Das Ehternet Interface muss via Luxtronic Steuergerät konfiguriert werden (siehe Luxtronic Manual)
+
+Nun kann via einem WebBrowser die aktuellen Daten der WP angezeigt werden (siehe WP CTA Aeroheat CI 8is Webserver.jpg).
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Anforderungen
+
+Hardware Vorussetzungen:
+- ESP32 board with WiFi
+- Eternet Verbindung Luxtronic/LAN
+
+Software Vorussetzungen:
+- Arduino IDE
+- Libraries
+  - <NTP.h>
+  - <UnixTime.h>
+  - <AsyncTCP.h>
+  - <ESPAsyncWebServer.h>
+  - <WebSerial.h> or licensed <WebSerialPro.h>
+  - <MQTT.h>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Kommunikation Luxtronic
+
+Über die proprietäre Schnittstelle (Port 8889) der Luxtronic 2.x können die Daten, wie im WebBrowser ersichtlich, abgefragt werden.
+Dazu müssen zuerst die beiden Commands '3004' (get calculated) gefolgt von '0000' (execute) gesendet werden.
+
+Danach können von der Luxtronic 2.x die Daten empfangen werden. Bei der Luxtronic Firmware V3.86.1(r7762) sind es 1064 Bytes.
+
+Hat die Kommunikation korrekt funktioniert, enthalten die ersten beiden 4 Bytes Blocks die Commands '3004' und '0000'.
+
+ID  Block (4 Bytes)     Data                      Decription
+00  00, 01, 02, 03      0x00, 0x00, 0x0b, 0xbc    '3004'  
+01  04, 05, 06, 07      0x00, 0x00, 0x00, 0x00    '0000'
+02  08...               NOP
+03  12...               NOP
+04  16...               NOP
+...
+12  48...               NOP
+13  52, 53, 64, 55      Temperatur_TVL            'Temperatur Vorlauf'
+17, 56, 57, 58, 59      Temperatur_TVR            'Temperatur Rücklauf'
+...
+1060, 1061, 1062, 1063  NOP
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Da die Dokumentation zu den Inhalten der Datenpakete spärlich ist oder nicht zu meiner WP resp. Firmware passte, musste die Zuordnung Datenpakete/Inhalte
+mühsam definiert werden. Mit Hilfe der aktuellen Daten aus dem WebBrowser können die Datenpakete entsprechend zugeordnet werden.
+Dazu kann das Sript ESP32_WP_CTA_Aeroheat_CI_8is_Inventory verwendet werden.
+
+Im Header File ESP32_WP_CTA_Aeroheat_CI_8is_MQTT.h sind die Zuordnungen Datenpakete/Inhalte definiert.
+
+// wp values [13-65] / register block #0
+#define WP_REGISTER_VALUES_NUMBER_BYTES        1064  Anzahl Bytes
+#define WP_REGISTER_VALUES_HEAD_ELEMENT        13    Numer des ersten datenpaketes
+#define WP_REGISTER_VALUES_ELEMENTS            18    Anzahl aktiver Elemente (unter wpRegisterSysValues nicht ausdokumentierte Werte)
+
+
+static struct wpRegisterDataStruct wpRegisterSysValues[] = {                                             // register block #0
+  {Bechreibung Wert ID, "Beschreibung Wert", "Typ", Faktor, "Einheit", MQTT aktiv}                       // Typ = U32 (unsigned Int), F32 (Float)
+  {WP_REGISTER_VALUES_TEMP_VL, "Temperatur_Vorlauf", "F32", 0.1, "°C", 1 },                              // #0
+  {WP_REGISTER_VALUES_TEMP_RL, "Temperatur_Rücklauf", "F32", 0.1, "°C", 1 },                             // #1
+  {WP_REGISTER_VALUES_TEMP_RL_SOLL, "Temperatur_Rücklauf_Soll", "F32", 0.1, "°C", 1 },                   // #2
+  //{WP_REGISTER_VALUES_TEMP_RL_EXT, "Temperatur_externer_Rücklauffühler", "F32", 0.1, "°C", 0 },        // #3
+  //{WP_REGISTER_VALUES_TEMP_HG, "Temperatur_Heissgas", "F32", 0.1, "°C", 1 },                             // #4
+  {WP_REGISTER_VALUES_TEMP_AUSSEN, "Temperatur_Aussenfühler", "F32", 0.1, "°C", 1 },                     // #5
+  ...
+  {WP_REGISTER_VALUES_LEISTUNG_HEIZUNG, "Leistung_Heizung", "F32", 0.001, "kW", 1 },                     // #68
+  //{WP_REGISTER_VALUES_FREIGABE_KUEHLUNG, "Freigabe_Kühlung", "F32", 0.000277778, "h", 1 }                // #69
+};
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Code
+
+Custom definitions in ESP32_WP_CTA_Aeroheat_CI_8is_MQTT.ino:
+
+#define ESP32_RESTART_TIMESTAMP "06:00"  // ESP32 restart timestamp 06h00
+#define GMT_1 1  // Greenwich Mean Time +1
+
+// WiFi definitions
+const char wifiSSID[] = "**<ssid>**";  // WiFi network SSID
+const char wifiPassword[] = "**<password>**";  // WiFi network password
+
+// CTA Aeroheat CI 8is Prod definitions
+const char wpServerIP[] = "**<x.x.x.x>**";
+int wpServerPort = **8889**;
+const char wpUser[] = "";
+const char wpPassword[] = "**666666**";  // default
+const char wpClientID[] = "**wp**";
+
+// MQTT definitions
+const char mqttServer[] = "**<x.x.x.x>**";
+int mqttServerPort = **1883**;
+const char mqttUser[] = "**<user>**";
+const char mqttPassword[] = "**<password>**";
+const char mqttClientID[] = "**wp_mqtt**";```
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Home Assistant
+
+Für die Integration in den Home Assistant müsse die Definitionen in den folgeden Files in die entsprechenden
+Home Assistant Konfigurations Files intergriert werden:
+ - configuration_wp.aml
+ - mqtt_wp.yaml
+ - templates_wp.yaml

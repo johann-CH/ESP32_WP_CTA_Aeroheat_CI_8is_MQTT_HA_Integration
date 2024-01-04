@@ -1,0 +1,59 @@
+- sensor:
+  #...
+  
+  # WP Effizienzfaktor
+  # - no divsion by 0! -> 0
+  # - wp_effizienzfaktor >= 10 -> max. 10 (divisor converges 0 -> wp efficiency factor diverged infinite)
+  # - wp_wirkungsgrad = (wp_leistung_heizung / (wp_heating_power / 1000)
+  - name: 'WP Effizienzfaktor'
+    unique_id: wp_ffizienzfaktor
+    icon: 'mdi:cogs'
+    state: >
+      {% if (states('sensor.wp_heating_power') | float) == 0 %}
+        {{
+          (0.00)
+        }}
+      {% elif ((states('sensor.wp_leistung_heizung') | float) / ((states('sensor.wp_heating_power') | float) / 1000)) >= 10 %}
+        {{
+          (10.00)
+        }}
+      {% else %}
+        {{
+          (((states('sensor.wp_leistung_heizung') | float) / ((states('sensor.wp_heating_power') | float) / 1000)) | round(2))
+        }}
+      {% endif %}
+  
+  # WP Temperatur Differenz Vorlauf/Rücklauf
+  - name: 'WP Temperatur Differenz Vorlauf/Rücklauf'
+    unique_id: wp_temperatur_differenz_vorlauf_rücklauf
+    device_class: temperature
+    unit_of_measurement: '°C'
+    icon: 'mdi:water-thermometer'
+    state: >
+      {{
+        (((states('sensor.wp_temperatur_vorlauf') | float) - (states('sensor.wp_temperatur_rucklauf') | float)) | round(2))
+      }}
+  
+  # WP Temperatur Vorlauf Soll/Ist
+  - name: 'WP Temperatur Vorlauf Soll/Ist'
+    unique_id: wp_temperatur_vorlauf_soll_ist
+    device_class: temperature
+    unit_of_measurement: '°C'
+    icon: 'mdi:water-thermometer'
+    state: >
+      {{
+        (((states('sensor.wp_temperatur_vorlauf_soll') | float) - (states('sensor.wp_temperatur_vorlauf') | float)) | abs | round(2))
+      }}
+  
+  # WP Temperatur Rücklauf Soll/Ist
+  - name: 'WP Temperatur Rücklauf Soll/Ist'
+    unique_id: wp_temperatur_rücklauf_soll_ist
+    device_class: temperature
+    unit_of_measurement: '°C'
+    icon: 'mdi:water-thermometer'
+    state: >
+      {{
+        (((states('sensor.wp_temperatur_rucklauf_soll') | float) - (states('sensor.wp_temperatur_rucklauf') | float)) | abs | round(2))
+      }}
+
+  #...

@@ -1,0 +1,197 @@
+sensor:
+  ...
+  
+  # WP System Time
+  - name: 'WP System Time'
+    unique_id: wp_system_time
+    state_topic: 'WP/System_Time'
+    icon: 'mdi:calendar-clock'
+    value_template: '{{ value_json.System_Time }}'
+    
+  # WP SysValue
+  - name: 'WP System State ID'
+    unique_id: wp_betriebszustand_id
+    state_topic: 'WP/Betriebszustand'
+    icon: 'mdi:heat-pump-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Betriebszustand }}'
+    
+  - name: 'WP System State'
+    unique_id: wp_betriebszustand
+    state_topic: 'WP/Betriebszustand'
+    icon: 'mdi:heat-pump-outline'
+    value_template: >-
+      {% if value_json.Betriebszustand == '0' %}
+        {{ 'Heizen' }}
+      {% elif value_json.Betriebszustand == '1' %}
+        {{ 'Warmwasser' }}
+      {% elif value_json.Betriebszustand == '2' %}
+        {{ 'Ausheizprogramm' }}
+      {% elif value_json.Betriebszustand == '3' %}
+        {{ 'EVU' }}
+      {% elif value_json.Betriebszustand == '4' %}
+        {{ 'Abtau' }}
+      {% elif value_json.Betriebszustand == '5' %}
+        {{ 'Pumpenvorlauf' }}
+      {% elif value_json.Betriebszustand == '6' %}
+        {{ 'Fehler' }}
+      {% else %}
+        {{ 'N/A' }}
+      {% endif %}
+    
+  - name: 'WP Betriebsstunden'
+    unique_id: wp_betriebsstunden
+    state_topic: 'WP/Betriebsstunden'
+    unit_of_measurement: 'h'
+    state_class: measurement
+    value_template: '{{ value_json.Betriebsstunden }}'
+    
+  - name: 'WP Impulse Verdichter'
+    unique_id: wp_impulse_verdichter
+    state_topic: 'WP/Impulse_Verdichter'
+    state_class: measurement
+    icon: 'mdi:power-cycle'
+    value_template: '{{ value_json.Impulse_Verdichter }}'
+    
+  - name: 'WP Wärmemenge Heizung'
+    unique_id: wp_wärmemenge_heizung
+    state_topic: 'WP/Wärmemenge_Heizung'
+    device_class: energy
+    unit_of_measurement: 'kWh'
+    state_class: measurement
+    value_template: '{{ value_json.Wärmemenge_Heizung }}'
+    
+  - name: 'WP Leistung Heizung'
+    unique_id: wp_leistung_heizung
+    state_topic: 'WP/Leistung_Heizung'
+    device_class: power
+    unit_of_measurement: 'kW'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Leistung_Heizung }}'
+    
+  - name: 'WP Einschaltdauer'
+    unique_id: wp_einschaltdauer
+    state_topic: 'WP/Einschaltdauer'
+    unit_of_measurement: 'h'
+    state_class: measurement
+    icon: 'mdi:wrench-clock'
+    force_update: true
+    value_template: '{{ value_json.Einschaltdauer }}'
+    
+  - name: 'WP Abtauen'
+    unique_id: wp_abtauen
+    state_topic: 'WP/Abtauen'
+    unit_of_measurement: 'h'
+    state_class: measurement
+    icon: 'mdi:wrench-clock'
+    force_update: true
+    value_template: '{{ value_json.Abtauen }}'
+    
+  - name: 'WP Durchfluss Wärmemengenzähler'
+    unique_id: wp_durchfluss_wärmemengenzähler
+    state_topic: 'WP/Durchfluss_Wärmemengenzähler'
+    device_class: Water
+    unit_of_measurement: 'l/h'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Durchfluss_Wärmemengenzähler }}'
+    
+  - name: 'WP Drehzahl Umwälzpumpe'
+    unique_id: wp_drehzahl_umwälzpumpe
+    state_topic: 'WP/Drehzahl_Umwälzpumpe'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:pump'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Umwälzpumpe }}'
+    
+  - name: 'WP Drehzahl Verdichter'
+    unique_id: wp_drehzahl_verdichter
+    state_topic: 'WP/Drehzahl_Verdichter'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:pump'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Verdichter }}'
+    
+  - name: 'WP Drehzahl Verdichter Soll'
+    unique_id: wp_drehzahl_verdichter_soll
+    state_topic: 'WP/Drehzahl_Verdichter_Soll'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:pump'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Verdichter_Soll }}'
+    
+  - name: 'WP Drehzahl Ventilator'
+    unique_id: wp_drehzahl_ventilator
+    state_topic: 'WP/Drehzahl_Ventilator'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:fan'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Ventilator }}'
+    
+  - name: 'WP Temperatur Aussenfühler'
+    unique_id: wp_temperatur_aussenfühler
+    state_topic: 'WP/Temperatur_Aussenfühler'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:home-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Aussenfühler }}'
+    
+  - name: 'WP Temperatur Aussenfühler Ø (24h)'
+    unique_id: wp_temperatur_aussenfühler_durchschnitt_24h
+    state_topic: 'WP/Temperatur_Aussenfühler_Durchschnitt_24h'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    value_template: '{{ value_json.Temperatur_Aussenfühler_Durchschnitt_24h }}'
+    
+  - name: 'WP Temperatur Vorlauf'
+    unique_id: wp_temperatur_vorlauf
+    state_topic: 'WP/Temperatur_Vorlauf'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Vorlauf }}'
+    
+  - name: 'WP Temperatur Vorlauf Soll'
+    unique_id: wp_temperatur_vorlauf_soll
+    state_topic: 'WP/Temperatur_Vorlauf_Soll'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Vorlauf_Soll }}'
+    
+  - name: 'WP Temperatur Rücklauf'
+    unique_id: wp_temperatur_rücklauf
+    state_topic: 'WP/Temperatur_Rücklauf'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Rücklauf }}'
+    
+  - name: 'WP Temperatur Rücklauf Soll'
+    unique_id: wp_temperatur_rücklauf_soll
+    state_topic: 'WP/Temperatur_Rücklauf_Soll'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Rücklauf_Soll }}'
+
+   ...
+
+#EOF
