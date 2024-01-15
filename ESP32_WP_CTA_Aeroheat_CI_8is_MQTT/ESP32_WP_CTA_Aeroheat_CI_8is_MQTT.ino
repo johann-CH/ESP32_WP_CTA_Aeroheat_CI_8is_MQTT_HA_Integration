@@ -198,7 +198,7 @@ void setup() {
   Serial.print(WiFi.localIP());
   Serial.println("> connected.\n");
   Serial.println();
-
+  
   // initialize over the air serial monitor
   #ifdef OTA_OUTPUT
     WebSerialPro.begin(&serialOTA);
@@ -351,7 +351,7 @@ void loop() {
   // handle ESP32 restart @06:00
   sprintf(msgString, "%0.2d:%02d", unixTimestamp.hour, unixTimestamp.minute);  // <hh:mm>
   actTimestamp = (String)msgString;
-
+  
   #ifdef ESP32_RESTART_TIMESTAMP
   // restart only if ESP32_RESTART_TIMESTAMP is defined
     if(actTimestamp == ESP32_RESTART_TIMESTAMP) {
@@ -592,7 +592,7 @@ void loop() {
       
       sprintf(msgString, "%0.4d-%0.2d-%0.2d / %0.2d:%0.2d:%0.2d", unixTimestamp.year, unixTimestamp.month, unixTimestamp.day, unixTimestamp.hour, unixTimestamp.minute, unixTimestamp.second);
       wpTime = msgString;
-      //wpTime = String(String(unixTimestamp.year).c_str()).c_str() + "-" + unixTimestamp.month).c_str() + "-" + unixTimestamp.day).c_str() + " " + unixTimestamp.hour).c_str() + ":" + unixTimestamp.minute).c_str() + ":" + unixTimestamp.second).c_str()).c_str();
+      //wpTime = String(String(unixTimestamp.year).c_str()).c_str() + "-" + unixTimestamp.month).c_str() + "-" + unixTimestamp.day).c_str() + " / " + unixTimestamp.hour).c_str() + ":" + unixTimestamp.minute).c_str() + ":" + unixTimestamp.second).c_str()).c_str();
       mqttPayload = ("{\"" + String(mqttTopicEntity) + "\":\"" + String(wpTime) + "\"}").c_str();
       mqttSuccess = mqttClient.publish(mqttTopic, mqttPayload, mqttRetained, mqttQoS);
       
