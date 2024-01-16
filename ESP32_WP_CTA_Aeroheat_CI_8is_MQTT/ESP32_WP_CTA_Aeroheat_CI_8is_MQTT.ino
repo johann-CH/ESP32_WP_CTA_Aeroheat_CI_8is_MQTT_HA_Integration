@@ -51,6 +51,7 @@
 #define ESP32_RESTART_TIMESTAMP "06:00"  // ESP32 restart timestamp 06h00 (no restart if commented out)
 #define ESP32_RESTART_LOCK_DELAY 60000   // ESP32 restart lock delay 60s [ms]
 #define ESP32_RESTART_DELAY 5000         // ESP32 restart command delay [ms]
+#define ESP32_HALT_DELAY 60000           // ESP32 halt delay 60s [ms]
 
 #define GMT_1 1  // Greenwich Mean Time +1
 
@@ -139,6 +140,7 @@ uint8_t wpCommandExecute[tcpTxBufferSize] = {0x00, 0x00, 0x00, 0x00};    // '000
 unsigned long tcpCheckGetValue = ((tcpRxBuffer[0] << 24) + (tcpRxBuffer[1] << 16) + (tcpRxBuffer[2] << 8) + tcpRxBuffer[3]);  // bytes 0-3
 unsigned long tcpCheckExecute = ((tcpRxBuffer[4] << 24) + (tcpRxBuffer[5] << 16) + (tcpRxBuffer[6] << 8) + tcpRxBuffer[7]);  // bytes 4-7
 
+bool esp32Halt = 0;
 bool connectionsEstablished = 0;
 bool wpCommandTransmitted = 0;
 
@@ -358,6 +360,19 @@ void loop() {
       esp32Restart();
     }
   #endif
+  
+  // handle ESP32 Halt
+  if(esp32Halt) {
+    esp32Halt = false;
+    
+    Serial.println("ESP32 Halt...");
+    #ifdef OTA_OUTPUT
+      WebSerialPro.println("ESP32 Halt...");
+    #endif
+    
+    delay(ESP32_HALT_DELAY);
+    esp32Restart();
+  }
   
   // handle MQTT loop
   mqttClient.loop();
@@ -692,8 +707,8 @@ void esp32Restart() {
   wifiConnectionID.stop();
   delay(CONNECTION_DELAY);
   WiFi.disconnect();
-  delay(ESP32_RESTART_DELAY);
   
+  delay(ESP32_RESTART_DELAY);
   ESP.restart();
 }
 
@@ -706,13 +721,9 @@ void serialOTAReceiver(uint8_t *data, size_t length) {
   }
   
   if(buffer == "Restart") {
-    WebSerialPro.println("ESP32 Restarting...");
-    delay(ESP32_RESTART_DELAY);
     esp32Restart();
   } else if(buffer == "Halt") {
-    WebSerialPro.println("ESP32 Halt...");
-    delay(ESP32_RESTART_DELAY);
-    while(1);
+    esp32Halt = 1;
   } else {
     WebSerialPro.println("Usage: \'Restart\' | \'Halt\'");
   }
