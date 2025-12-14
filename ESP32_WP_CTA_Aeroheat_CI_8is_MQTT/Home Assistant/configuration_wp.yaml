@@ -1,0 +1,60 @@
+# file: /config/configuration.yaml (Prod)
+
+# loads default set of integrations - do not remove!
+default_config:
+
+# load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+# text to speech
+#tts:
+#  - platform: google_translate
+
+# includes
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+template: !include templates.yaml
+mqtt: !include mqtt.yaml
+
+# influx db definitions
+influxdb:
+  host: localhost
+  port: 8086
+  database: homeassistant
+  username: homeassistant
+  password: homeassistant
+  max_retries: 3
+  default_measurement: state
+  include:
+    domains:
+      - sensor
+    entity_globs:
+      - sensor.*
+
+# utility meter definitions
+utility_meter:
+  # WP Wärmemenge
+  wp_waermemenge_daily:
+    name: 'WP Wärmemenge Daily'
+    unique_id: wp_waermemenge_daily
+    source: sensor.wp_warmemenge_heizung
+    cycle: daily
+  
+  wp_waermemenge_monthly:
+    name: 'WP Wärmemenge Monthly'
+    unique_id: wp_waermemenge_monthly
+    source: sensor.wp_warmemenge_heizung
+    cycle: monthly
+  
+  wp_waermemenge_yearly:
+    name: 'WP Wärmemenge Yearly'
+    unique_id: wp_waermemenge_yearly
+    source: sensor.wp_warmemenge_heizung
+    cycle: yearly
+  
+  wp_waermemenge_total:
+    name: 'WP Wärmemenge Total'
+    unique_id: wp_waermemenge_total
+    source: sensor.wp_warmemenge_heizung

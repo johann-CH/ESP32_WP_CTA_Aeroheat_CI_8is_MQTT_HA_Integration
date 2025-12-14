@@ -1,0 +1,506 @@
+# file: /config/mqtt.yaml (Prod)
+
+sensor:
+  # WP System Time
+  - name: 'WP System Time'
+    unique_id: wp_system_time
+    state_topic: 'WP/System_Time'
+    icon: 'mdi:calendar-clock'
+    value_template: '{{ value_json.System_Time }}'
+    
+  # WP SysValue
+  - name: 'WP System State ID'
+    unique_id: wp_betriebszustand_id
+    state_topic: 'WP/Betriebszustand'
+    icon: 'mdi:heat-pump-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Betriebszustand }}'
+    
+  - name: 'WP System State'
+    unique_id: wp_betriebszustand
+    state_topic: 'WP/Betriebszustand'
+    icon: 'mdi:heat-pump-outline'
+    value_template: >-
+      {% if value_json.Betriebszustand == '0' %}
+        {{ 'Heizen' }}
+      {% elif value_json.Betriebszustand == '1' %}
+        {{ 'Warmwasser' }}
+      {% elif value_json.Betriebszustand == '2' %}
+        {{ 'Ausheizprogramm' }}
+      {% elif value_json.Betriebszustand == '3' %}
+        {{ 'EVU' }}
+      {% elif value_json.Betriebszustand == '4' %}
+        {{ 'Abtauen' }}
+      {% elif value_json.Betriebszustand == '5' %}
+        {{ 'Pumpenvorlauf' }}
+      {% elif value_json.Betriebszustand == '6' %}
+        {{ 'Heizen (extern)' }}
+      {% else %}
+        {{ 'N/A' }}
+      {% endif %}
+    
+  - name: 'WP Error Code0'
+    unique_id: wp_error_code0
+    state_topic: 'WP/Error_Code0'
+    icon: 'mdi:alert-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Error_Code0 }}'
+    
+  - name: 'WP Error Code1'
+    unique_id: wp_error_code1
+    state_topic: 'WP/Error_Code1'
+    icon: 'mdi:alert-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Error_Code1 }}'
+    
+  - name: 'WP Error Code2'
+    unique_id: wp_error_code2
+    state_topic: 'WP/Error_Code2'
+    icon: 'mdi:alert-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Error_Code2 }}'
+    
+  - name: 'WP Error Code3'
+    unique_id: wp_error_code3
+    state_topic: 'WP/Error_Code3'
+    icon: 'mdi:alert-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Error_Code3 }}'
+    
+  - name: 'WP Error Code4'
+    unique_id: wp_error_code4
+    state_topic: 'WP/Error_Code4'
+    icon: 'mdi:alert-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Error_Code4 }}'
+    
+  - name: 'PV Inverter System Time'
+    unique_id: pv_inverter_system_time
+    state_topic: 'PVInverter/System_Time'
+    icon: 'mdi:calendar-clock'
+    value_template: '{{ value_json.System_Time }}'
+
+  - name: 'WP Error Timestamp 0'
+    unique_id: wp_error_timestamp0
+    state_topic: 'WP/Error_Timestamp0'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Error_Timestamp0 }}'
+    
+  - name: 'WP Error Timestamp 1'
+    unique_id: wp_error_timestamp1
+    state_topic: 'WP/Error_Timestamp1'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Error_Timestamp1 }}'
+    
+  - name: 'WP Error Timestamp 2'
+    unique_id: wp_error_timestamp2
+    state_topic: 'WP/Error_Timestamp2'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Error_Timestamp2 }}'
+    
+  - name: 'WP Error Timestamp 3'
+    unique_id: wp_error_timestamp3
+    state_topic: 'WP/Error_Timestamp3'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Error_Timestamp3 }}'
+    
+  - name: 'WP Error Timestamp 4'
+    unique_id: wp_error_timestamp4
+    state_topic: 'WP/Error_Timestamp4'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Error_Timestamp4 }}'
+    
+  - name: 'WP Abschalt Ursache 0 ID'
+    unique_id: wp_abschalt_ursache0_id
+    state_topic: 'WP/Abschalt_Ursache0_ID'
+    icon: 'mdi:cog-off-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Abschalt_Ursache0 }}'
+    
+  - name: 'WP Abschalt Ursache 0'
+    unique_id: wp_abschalt_ursache0
+    state_topic: 'WP/Abschalt_Ursache0'
+    icon: 'mdi:cog-off-outline'
+    value_template: >-
+      {% if value_json.Abschalt_Ursache0 == '0' %}
+        {{ '-' }}
+      {% elif value_json.Abschalt_Ursache0 == '1' %}
+        {{ 'Störung Wärmepumpe' }}
+      {% elif value_json.Abschalt_Ursache0 == '2' %}
+        {{ 'Störung Anlage' }}
+      {% elif value_json.Abschalt_Ursache0 == '3' %}
+        {{ 'Betriebsart zweiter Wärmeerzeuger' }}
+      {% elif value_json.Abschalt_Ursache0 == '4' %}
+        {{ 'EVU Sperre' }}
+      {% elif value_json.Abschalt_Ursache0 == '5' %}
+        {{ 'Lauftabtau' }}
+      {% elif value_json.Abschalt_Ursache0 == '6' %}
+        {{ 'Temperatur Einsatzgrenze max.' }}
+      {% elif value_json.Abschalt_Ursache0 == '7' %}
+        {{ 'Temperatur Einsatzgrenze min.' }}
+      {% elif value_json.Abschalt_Ursache0 == '8' %}
+        {{ 'Untere Einsatzgrenze' }}
+      {% elif value_json.Abschalt_Ursache0 == '9' %}
+        {{ 'Anforderung' }}
+      {% else %}
+        {{ 'N/A' }}
+      {% endif %}
+    
+  - name: 'WP Abschalt Ursache 1 ID'
+    unique_id: wp_abschalt_ursache1_id
+    state_topic: 'WP/Abschalt_Ursache1_ID'
+    icon: 'mdi:cog-off-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Abschalt_Ursache1 }}'
+    
+  - name: 'WP Abschalt Ursache 1'
+    unique_id: wp_abschalt_ursache1
+    state_topic: 'WP/Abschalt_Ursache1'
+    icon: 'mdi:cog-off-outline'
+    value_template: >-
+      {% if value_json.Abschalt_Ursache1 == '0' %}
+        {{ '-' }}
+      {% elif value_json.Abschalt_Ursache1 == '1' %}
+        {{ 'Störung Wärmepumpe' }}
+      {% elif value_json.Abschalt_Ursache1 == '2' %}
+        {{ 'Störung Anlage' }}
+      {% elif value_json.Abschalt_Ursache1 == '3' %}
+        {{ 'Betriebsart zweiter Wärmeerzeuger' }}
+      {% elif value_json.Abschalt_Ursache1 == '4' %}
+        {{ 'EVU Sperre' }}
+      {% elif value_json.Abschalt_Ursache1 == '5' %}
+        {{ 'Lauftabtau' }}
+      {% elif value_json.Abschalt_Ursache1 == '6' %}
+        {{ 'Temperatur Einsatzgrenze max.' }}
+      {% elif value_json.Abschalt_Ursache1 == '7' %}
+        {{ 'Temperatur Einsatzgrenze min.' }}
+      {% elif value_json.Abschalt_Ursache1 == '8' %}
+        {{ 'Untere Einsatzgrenze' }}
+      {% elif value_json.Abschalt_Ursache1 == '9' %}
+        {{ 'Anforderung' }}
+      {% else %}
+        {{ 'N/A' }}
+      {% endif %}
+    
+  - name: 'WP Abschalt Ursache 2 ID'
+    unique_id: wp_abschalt_ursache2_id
+    state_topic: 'WP/Abschalt_Ursache2_ID'
+    icon: 'mdi:cog-off-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Abschalt_Ursache2 }}'
+    
+  - name: 'WP Abschalt Ursache 2'
+    unique_id: wp_abschalt_ursache2
+    state_topic: 'WP/Abschalt_Ursache2'
+    icon: 'mdi:cog-off-outline'
+    value_template: >-
+      {% if value_json.Abschalt_Ursache2 == '0' %}
+        {{ '-' }}
+      {% elif value_json.Abschalt_Ursache2 == '1' %}
+        {{ 'Störung Wärmepumpe' }}
+      {% elif value_json.Abschalt_Ursache2 == '2' %}
+        {{ 'Störung Anlage' }}
+      {% elif value_json.Abschalt_Ursache2 == '3' %}
+        {{ 'Betriebsart zweiter Wärmeerzeuger' }}
+      {% elif value_json.Abschalt_Ursache2 == '4' %}
+        {{ 'EVU Sperre' }}
+      {% elif value_json.Abschalt_Ursache2 == '5' %}
+        {{ 'Lauftabtau' }}
+      {% elif value_json.Abschalt_Ursache2 == '6' %}
+        {{ 'Temperatur Einsatzgrenze max.' }}
+      {% elif value_json.Abschalt_Ursache2 == '7' %}
+        {{ 'Temperatur Einsatzgrenze min.' }}
+      {% elif value_json.Abschalt_Ursache2 == '8' %}
+        {{ 'Untere Einsatzgrenze' }}
+      {% elif value_json.Abschalt_Ursache2 == '9' %}
+        {{ 'Anforderung' }}
+      {% else %}
+        {{ 'N/A' }}
+      {% endif %}
+    
+  - name: 'WP Abschalt Ursache 3 ID'
+    unique_id: wp_abschalt_ursache3_id
+    state_topic: 'WP/Abschalt_Ursache3_ID'
+    icon: 'mdi:cog-off-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Abschalt_Ursache3 }}'
+    
+  - name: 'WP Abschalt Ursache 3'
+    unique_id: wp_abschalt_ursache3
+    state_topic: 'WP/Abschalt_Ursache3'
+    icon: 'mdi:cog-off-outline'
+    value_template: >-
+      {% if value_json.Abschalt_Ursache3 == '0' %}
+        {{ '-' }}
+      {% elif value_json.Abschalt_Ursache3 == '1' %}
+        {{ 'Störung Wärmepumpe' }}
+      {% elif value_json.Abschalt_Ursache3 == '2' %}
+        {{ 'Störung Anlage' }}
+      {% elif value_json.Abschalt_Ursache3 == '3' %}
+        {{ 'Betriebsart zweiter Wärmeerzeuger' }}
+      {% elif value_json.Abschalt_Ursache3 == '4' %}
+        {{ 'EVU Sperre' }}
+      {% elif value_json.Abschalt_Ursache3 == '5' %}
+        {{ 'Lauftabtau' }}
+      {% elif value_json.Abschalt_Ursache3 == '6' %}
+        {{ 'Temperatur Einsatzgrenze max.' }}
+      {% elif value_json.Abschalt_Ursache3 == '7' %}
+        {{ 'Temperatur Einsatzgrenze min.' }}
+      {% elif value_json.Abschalt_Ursache3 == '8' %}
+        {{ 'Untere Einsatzgrenze' }}
+      {% elif value_json.Abschalt_Ursache3 == '9' %}
+        {{ 'Anforderung' }}
+      {% else %}
+        {{ 'N/A' }}
+      {% endif %}
+    
+  - name: 'WP Abschalt Ursache 4 ID'
+    unique_id: wp_abschalt_ursache4_id
+    state_topic: 'WP/Abschalt_Ursache4_ID'
+    icon: 'mdi:cog-off-outline'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Abschalt_Ursache4 }}'
+    
+  - name: 'WP Abschalt Ursache 4'
+    unique_id: wp_abschalt_ursache4
+    state_topic: 'WP/Abschalt_Ursache4'
+    icon: 'mdi:cog-off-outline'
+    value_template: >-
+      {% if value_json.Abschalt_Ursache4 == '0' %}
+        {{ '-' }}
+      {% elif value_json.Abschalt_Ursache4 == '1' %}
+        {{ 'Störung Wärmepumpe' }}
+      {% elif value_json.Abschalt_Ursache4 == '2' %}
+        {{ 'Störung Anlage' }}
+      {% elif value_json.Abschalt_Ursache4 == '3' %}
+        {{ 'Betriebsart zweiter Wärmeerzeuger' }}
+      {% elif value_json.Abschalt_Ursache4 == '4' %}
+        {{ 'EVU Sperre' }}
+      {% elif value_json.Abschalt_Ursache4 == '5' %}
+        {{ 'Lauftabtau' }}
+      {% elif value_json.Abschalt_Ursache4 == '6' %}
+        {{ 'Temperatur Einsatzgrenze max.' }}
+      {% elif value_json.Abschalt_Ursache4 == '7' %}
+        {{ 'Temperatur Einsatzgrenze min.' }}
+      {% elif value_json.Abschalt_Ursache4 == '8' %}
+        {{ 'Untere Einsatzgrenze' }}
+      {% elif value_json.Abschalt_Ursache4 == '9' %}
+        {{ 'Anforderung' }}
+      {% else %}
+        {{ 'N/A' }}
+      {% endif %}
+    
+  - name: 'WP Abschalt Timestamp 0'
+    unique_id: wp_abschalt_timestamp0
+    state_topic: 'WP/Abschalt_Timestamp0'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Abschalt_Timestamp0 }}'
+    
+  - name: 'WP Abschalt Timestamp 1'
+    unique_id: wp_abschalt_timestamp1
+    state_topic: 'WP/Abschalt_Timestamp1'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Abschalt_Timestamp1 }}'
+    
+  - name: 'WP Abschalt Timestamp 2'
+    unique_id: wp_abschalt_timestamp2
+    state_topic: 'WP/Abschalt_Timestamp2'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Abschalt_Timestamp2 }}'
+    
+  - name: 'WP Abschalt Timestamp 3'
+    unique_id: wp_abschalt_timestamp3
+    state_topic: 'WP/Abschalt_Timestamp3'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Abschalt_Timestamp3 }}'
+    
+  - name: 'WP Abschalt Timestamp 4'
+    unique_id: wp_abschalt_timestamp4
+    state_topic: 'WP/Abschalt_Timestamp4'
+    icon: 'mdi:clock-alert-outline'
+    value_template: '{{ value_json.Abschalt_Timestamp4 }}'
+    
+  - name: 'WP Betriebsstunden'
+    unique_id: wp_betriebsstunden
+    state_topic: 'WP/Betriebsstunden'
+    unit_of_measurement: 'h'
+    state_class: measurement
+    icon: 'mdi:wrench-clock'
+    value_template: '{{ value_json.Betriebsstunden }}'
+    
+  - name: 'WP Impulse Verdichter'
+    unique_id: wp_impulse_verdichter
+    state_topic: 'WP/Impulse_Verdichter'
+    state_class: measurement
+    icon: 'mdi:power-cycle'
+    value_template: '{{ value_json.Impulse_Verdichter }}'
+    
+  - name: 'WP Wärmemenge Heizung'
+    unique_id: wp_waermemenge_heizung
+    state_topic: 'WP/Wärmemenge_Heizung'
+    device_class: energy
+    unit_of_measurement: 'kWh'
+    state_class: measurement
+    value_template: '{{ value_json.Wärmemenge_Heizung }}'
+    
+  - name: 'WP Leistung Heizung'
+    unique_id: wp_leistung_heizung
+    state_topic: 'WP/Leistung_Heizung'
+    device_class: power
+    unit_of_measurement: 'kW'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Leistung_Heizung }}'
+    
+  - name: 'WP Einschaltdauer'
+    unique_id: wp_einschaltdauer
+    state_topic: 'WP/Einschaltdauer'
+    unit_of_measurement: 'h'
+    state_class: measurement
+    icon: 'mdi:wrench-clock'
+    force_update: true
+    value_template: '{{ value_json.Einschaltdauer }}'
+    
+  - name: 'WP Abtauen'
+    unique_id: wp_abtauen
+    state_topic: 'WP/Abtauen'
+    unit_of_measurement: 'h'
+    state_class: measurement
+    icon: 'mdi:clock-alert-outline'
+    force_update: true
+    value_template: '{{ value_json.Abtauen }}'
+    
+  - name: 'WP Durchfluss Wärmemengenzähler'
+    unique_id: wp_durchfluss_waermemengenzaehler
+    state_topic: 'WP/Durchfluss_Wärmemengenzähler'
+    device_class: volume_flow_rate
+    unit_of_measurement: 'L/h'
+    state_class: measurement
+    force_update: true
+    value_template: '{{ value_json.Durchfluss_Wärmemengenzähler }}'
+    
+  - name: 'WP Drehzahl Umwälzpumpe'
+    unique_id: wp_drehzahl_umwaelzpumpe
+    state_topic: 'WP/Drehzahl_Umwälzpumpe'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:pump'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Umwälzpumpe }}'
+    
+  - name: 'WP Drehzahl Verdichter'
+    unique_id: wp_drehzahl_verdichter
+    state_topic: 'WP/Drehzahl_Verdichter'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:pump'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Verdichter }}'
+    
+  - name: 'WP Drehzahl Verdichter Soll'
+    unique_id: wp_drehzahl_verdichter_soll
+    state_topic: 'WP/Drehzahl_Verdichter_Soll'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:pump'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Verdichter_Soll }}'
+    
+  - name: 'WP Drehzahl Ventilator'
+    unique_id: wp_drehzahl_ventilator
+    state_topic: 'WP/Drehzahl_Ventilator'
+    unit_of_measurement: 'rpm'
+    state_class: measurement
+    icon: 'mdi:fan'
+    force_update: true
+    value_template: '{{ value_json.Drehzahl_Ventilator }}'
+    
+  - name: 'WP Temperatur Aussenfühler'
+    unique_id: wp_temperatur_aussenfuehler
+    state_topic: 'WP/Temperatur_Aussenfühler'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:home-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Aussenfühler }}'
+    
+  - name: 'WP Temperatur Aussenfühler Ø (24h)'
+    unique_id: wp_temperatur_aussenfuehler_durchschnitt_24h
+    state_topic: 'WP/Temperatur_Aussenfühler_Durchschnitt_24h'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:home-thermometer'
+    value_template: '{{ value_json.Temperatur_Aussenfühler_Durchschnitt_24h }}'
+    
+  - name: 'WP Temperatur Vorlauf'
+    unique_id: wp_temperatur_vorlauf
+    state_topic: 'WP/Temperatur_Vorlauf'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Vorlauf }}'
+    
+  - name: 'WP Temperatur Vorlauf Soll'
+    unique_id: wp_temperatur_vorlauf_soll
+    state_topic: 'WP/Temperatur_Vorlauf_Soll'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Vorlauf_Soll }}'
+    
+  - name: 'WP Temperatur Rücklauf'
+    unique_id: wp_temperatur_ruecklauf
+    state_topic: 'WP/Temperatur_Rücklauf'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Rücklauf }}'
+    
+  - name: 'WP Temperatur Rücklauf Soll'
+    unique_id: wp_temperatur_ruecklauf_soll
+    state_topic: 'WP/Temperatur_Rücklauf_Soll'
+    device_class: temperature
+    unit_of_measurement: '°C'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Rücklauf_Soll }}'
+    
+  - name: 'WP Temperatur Überhitzung'
+    unique_id: wp_temperatur_ueberhitzung
+    state_topic: 'WP/Temperatur_Überhitzung'
+    device_class: temperature
+    unit_of_measurement: 'K'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Überhitzung }}'
+    
+  - name: 'WP Temperatur Überhitzung Soll'
+    unique_id: wp_temperatur_ueberhitzung_soll
+    state_topic: 'WP/Temperatur_Überhitzung_Soll'
+    device_class: temperature
+    unit_of_measurement: 'K'
+    state_class: measurement
+    icon: 'mdi:water-thermometer'
+    force_update: true
+    value_template: '{{ value_json.Temperatur_Überhitzung_Soll }}'

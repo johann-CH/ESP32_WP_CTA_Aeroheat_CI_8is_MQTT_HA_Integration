@@ -1,0 +1,113 @@
+# file: /config/templates.yaml (Prod)
+
+- sensor:
+  # WP Heizleistung
+  # - wp_leistung_heizung < 0 -> (wp_leistung_heizung * (-1))
+  - name: 'WP Heizleistung'
+    unique_id: wp_heizleistung
+    device_class: power
+    state_class: measurement
+    unit_of_measurement: 'kW'
+    state: >
+      {% if (states('sensor.wp_leistung_heizung') | float) >= 0 %}
+        {{
+          (states('sensor.wp_leistung_heizung') | float | round(2))
+        }}
+      {% else %}
+        {{
+          (((states('sensor.wp_leistung_heizung') | float) * (-1)) | float | round(2))
+        }}
+      {% endif %}
+    
+  # WP Effizienzfaktor
+  # - no divsion by 0! -> 0
+  # - wp_effizienzfaktor >= 10 -> 0 (divisor converges 0 -> wp efficiency factor diverged infinite)
+  # - wp_wirkungsgrad = (wp_heizleistung / (wp_heating_power / 1000)
+  - name: 'WP Effizienzfaktor'
+    unique_id: wp_effizienzfaktor
+    icon: 'mdi:cogs'
+    state: >
+      {% if (states('sensor.wp_heating_power') | float) == 0 %}
+        {{
+          (0.00)
+        }}
+      {% elif ((states('sensor.wp_heizleistung') | float) / ((states('sensor.wp_heating_power') | float) / 1000)) >= 10 %}
+        {{
+          (0.00)
+        }}
+      {% else %}
+        {{
+          (((states('sensor.wp_heizleistung') | float) / ((states('sensor.wp_heating_power') | float) / 1000)) | round(2))
+        }}
+      {% endif %}
+    
+  # WP Temperatur Differenz Vorlauf/Rücklauf
+  - name: 'WP Temperatur Differenz Vorlauf/Rücklauf'
+    unique_id: wp_temperatur_differenz_vorlauf_ruecklauf
+    device_class: temperature
+    state_class: measurement
+    unit_of_measurement: '°C'
+    icon: 'mdi:water-thermometer'
+    state: >
+      {{
+        (((states('sensor.wp_temperatur_vorlauf') | float) - (states('sensor.wp_temperatur_rucklauf') | float)) | round(2))
+      }}
+    
+  # WP Temperatur Vorlauf Soll/Ist
+  - name: 'WP Temperatur Vorlauf Soll/Ist'
+    unique_id: wp_temperatur_vorlauf_soll_ist
+    device_class: temperature
+    state_class: measurement
+    unit_of_measurement: '°C'
+    icon: 'mdi:water-thermometer'
+    state: >
+      {{
+        (((states('sensor.wp_temperatur_vorlauf_soll') | float) - (states('sensor.wp_temperatur_vorlauf') | float)) | round(2))
+      }}
+    
+  # WP Temperatur Rücklauf Soll/Ist
+  - name: 'WP Temperatur Rücklauf Soll/Ist'
+    unique_id: wp_temperatur_ruecklauf_soll_ist
+    device_class: temperature
+    state_class: measurement
+    unit_of_measurement: '°C'
+    icon: 'mdi:water-thermometer'
+    state: >
+      {{
+        (((states('sensor.wp_temperatur_rucklauf_soll') | float) - (states('sensor.wp_temperatur_rucklauf') | float)) | round(2))
+      }}
+    
+  # WP Temperatur Überhitzung Soll/Ist
+  - name: 'WP Temperatur Überhitzung Soll/Ist'
+    unique_id: wp_temperatur_ueberhitzung_soll_ist
+    device_class: temperature
+    state_class: measurement
+    unit_of_measurement: 'K'
+    icon: 'mdi:water-thermometer'
+    state: >
+      {{
+        (((states('sensor.wp_temperatur_uberhitzung_soll') | float) - (states('sensor.wp_temperatur_uberhitzung') | float)) | round(2))
+      }}
+    
+  # WP Laufzeit Ø (Betriebsstunden)
+  - name: 'WP Laufzeit Ø (Betriebsstunden)'
+    unique_id: wp_laufzeit_durchschnitt
+    unit_of_measurement: 'h'
+    icon: 'mdi:wrench-clock'
+    state: >
+      {{
+        ((((states('sensor.wp_betriebsstunden') | float) / (states('sensor.wp_impulse_verdichter') | float)) | float) | round(2))
+      }}
+    
+  # WP Abtaubedarf
+  # - 10'800s ~ 3.00h =   0.0%
+  #        0s ~ 0.00h = 100.0%
+  #   10'301s ~ 2.86h =   4.6%
+  - name: 'WP Abtaubedarf'
+    unique_id: wp_abtaubedarf
+    unit_of_measurement: '%'
+    icon: 'mdi:snowflake-melt'
+    state: >
+      {{
+        (((100 - (((states('sensor.wp_abtauen') | float) / 3) * 100)) | float) | round(1))
+      }}
